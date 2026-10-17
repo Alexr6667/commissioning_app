@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { ChecklistForm } from '@/features/tasks/ChecklistForm'
 import { TaskItemForm } from '@/features/tasks/TaskItemForm'
 import type { TaskType } from '@/lib/types'
 import { useDataStore } from '@/stores/dataStore'
@@ -31,7 +32,10 @@ export function TaskDetail({ taskId, onBack }: TaskDetailProps) {
   const updateTaskItem = useDataStore((s) => s.updateTaskItem)
 
   const [mode, setMode] = useState<
-    { name: 'list' } | { name: 'add' } | { name: 'edit'; taskItemId: number }
+    | { name: 'list' }
+    | { name: 'add' }
+    | { name: 'edit'; taskItemId: number }
+    | { name: 'checklist'; taskItemId: number }
   >({ name: 'list' })
   const [removingId, setRemovingId] = useState<number | null>(null)
 
@@ -106,6 +110,17 @@ export function TaskDetail({ taskId, onBack }: TaskDetailProps) {
     )
   }
 
+  if (mode.name === 'checklist') {
+    return (
+      <ChecklistForm
+        key={mode.taskItemId}
+        taskItemId={mode.taskItemId}
+        onCancel={() => setMode({ name: 'list' })}
+        onSaved={() => setMode({ name: 'list' })}
+      />
+    )
+  }
+
   const statusLabel = task.status?.trim() ? task.status : 'No status'
 
   return (
@@ -143,6 +158,8 @@ export function TaskDetail({ taskId, onBack }: TaskDetailProps) {
             const removing = removingId === id
             const removed = item.status === 'Removed'
             const itemStatus = item.status?.trim() ? item.status : 'No status'
+            const hasChecklist =
+              (item.checklistTemplateSnapshot?.length ?? 0) > 0
             return (
               <li key={id}>
                 <Card>
@@ -163,6 +180,17 @@ export function TaskDetail({ taskId, onBack }: TaskDetailProps) {
                       {itemStatus}
                     </span>
                     <div className="flex gap-2">
+                      {hasChecklist ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() =>
+                            setMode({ name: 'checklist', taskItemId: id })
+                          }
+                        >
+                          Checklist
+                        </Button>
+                      ) : null}
                       <Button
                         type="button"
                         variant="outline"
