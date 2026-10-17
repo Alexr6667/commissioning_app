@@ -1,0 +1,74 @@
+export type SyncStatus = 'idle' | 'syncing' | 'error' | 'offline'
+
+export type SyncOperation = 'create' | 'update' | 'delete'
+
+export interface Customer {
+  id?: number
+  title: string
+  trackName?: string
+  contact?: string
+  siteAddress?: string
+  notes?: string
+  isLocked?: boolean
+  externalId?: string
+}
+
+export interface KartModel {
+  id?: number
+  title: string
+  description?: string
+  checklistTemplate?: unknown
+  active?: boolean
+  currentRecommendedFirmware?: string
+}
+
+export interface Kart {
+  id?: number
+  chassisNumber: string
+  modelId?: number
+  customerId?: number
+  status?: string
+  notes?: string
+  latestKnownFirmware?: string
+}
+
+export type TaskType = 'EndOfLine' | 'Onsite' | 'CustomerVisit'
+
+export interface Task {
+  id?: number
+  title: string
+  type?: TaskType
+  customerId?: number
+  assignee?: string
+  status?: string
+  dates?: string
+  overallNotes?: string
+  targetFirmwareOverrides?: unknown
+}
+
+export interface TaskItem {
+  id?: number
+  taskId: number
+  kartId?: number
+  status?: string
+  notes?: string
+}
+
+export interface ChecklistResponse {
+  id?: number
+  taskItemId: number
+  fieldKey: string
+  value?: string
+  technician?: string
+  timestamp?: string
+  attachment?: string
+}
+
+export interface SyncQueueItem {
+  id?: number
+  entity: string
+  entityId: number | string
+  operation: SyncOperation
+  payload?: unknown
+  createdAt: string
+}
