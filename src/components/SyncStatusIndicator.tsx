@@ -24,7 +24,7 @@ export function SyncStatusIndicator() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed right-4 bottom-4 z-50 flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-card-foreground shadow-sm"
+      className="pointer-events-none fixed right-4 bottom-4 z-50 flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-card-foreground shadow-sm"
     >
       <span
         className={cn('size-2 shrink-0 rounded-full', statusDot[status])}

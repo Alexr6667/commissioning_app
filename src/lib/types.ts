@@ -13,11 +13,27 @@ export interface Customer {
   externalId?: string
 }
 
+export type ChecklistFieldType =
+  | 'text'
+  | 'checkbox'
+  | 'number'
+  | 'select'
+  | 'textarea'
+
+export interface ChecklistField {
+  key: string
+  label: string
+  type: ChecklistFieldType
+  required: boolean
+  options?: string[]
+  section?: string
+}
+
 export interface KartModel {
   id?: number
   title: string
   description?: string
-  checklistTemplate?: unknown
+  checklistTemplate?: ChecklistField[]
   active?: boolean
   currentRecommendedFirmware?: string
 }
