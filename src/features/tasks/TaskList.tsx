@@ -19,9 +19,10 @@ const TASK_TYPE_LABELS: Record<TaskType, string> = {
 interface TaskListProps {
   onCreate: () => void
   onEdit: (taskId: number) => void
+  onOpenItems: (taskId: number) => void
 }
 
-export function TaskList({ onCreate, onEdit }: TaskListProps) {
+export function TaskList({ onCreate, onEdit, onOpenItems }: TaskListProps) {
   const tasks = useDataStore((s) => s.tasks)
   const customers = useDataStore((s) => s.customers)
   const updateTask = useDataStore((s) => s.updateTask)
@@ -102,6 +103,13 @@ export function TaskList({ onCreate, onEdit }: TaskListProps) {
                       {statusLabel}
                     </span>
                     <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => onOpenItems(id)}
+                      >
+                        Items
+                      </Button>
                       <Button type="button" variant="outline" onClick={() => onEdit(id)}>
                         Edit
                       </Button>
