@@ -1,0 +1,17 @@
+{
+  "name": "Commissioning App",
+  "short_name": "Commissioning",
+  "description": "Kart and Smart System commissioning PWA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
