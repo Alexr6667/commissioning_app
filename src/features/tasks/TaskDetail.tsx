@@ -41,6 +41,10 @@ export function TaskDetail({ taskId, onBack }: TaskDetailProps) {
 
   const task = tasks.find((item) => item.id === taskId)
   const items = taskItems.filter((item) => item.taskId === taskId)
+  const taskCustomer =
+    task?.customerId === undefined
+      ? undefined
+      : customers.find((customer) => customer.id === task.customerId)
 
   function customerTitle(customerId: number | undefined): string {
     if (customerId === undefined) return 'No customer'
@@ -122,6 +126,10 @@ export function TaskDetail({ taskId, onBack }: TaskDetailProps) {
   }
 
   const statusLabel = task.status?.trim() ? task.status : 'No status'
+  const preferredFirmware =
+    taskCustomer?.preferredControllerFirmware?.trim() || 'latest'
+  const preferredCpf = taskCustomer?.preferredControllerCpfFile?.trim()
+  const firmwareOverride = task.targetFirmwareOverrides?.trim()
 
   return (
     <section className="space-y-4">
@@ -140,6 +148,35 @@ export function TaskDetail({ taskId, onBack }: TaskDetailProps) {
           Add item
         </Button>
       </div>
+
+      {taskCustomer ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Firmware target</CardTitle>
+            <CardDescription>
+              Customer preference for this task, with any task-level override.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-1 text-sm">
+            <p>
+              <span className="text-muted-foreground">Preferred firmware: </span>
+              {preferredFirmware}
+            </p>
+            {preferredCpf ? (
+              <p>
+                <span className="text-muted-foreground">CPF reference: </span>
+                {preferredCpf}
+              </p>
+            ) : null}
+            {firmwareOverride ? (
+              <p>
+                <span className="text-muted-foreground">Task override: </span>
+                {firmwareOverride}
+              </p>
+            ) : null}
+          </CardContent>
+        </Card>
+      ) : null}
 
       {items.length === 0 ? (
         <Card>
