@@ -69,6 +69,9 @@ export function TaskForm({ taskId, onCancel, onSaved }: TaskFormProps) {
   const [status, setStatus] = useState(task?.status ?? 'New')
   const [dates, setDates] = useState(task?.dates ?? '')
   const [overallNotes, setOverallNotes] = useState(task?.overallNotes ?? '')
+  const [targetFirmwareOverrides, setTargetFirmwareOverrides] = useState(
+    task?.targetFirmwareOverrides ?? '',
+  )
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -78,6 +81,15 @@ export function TaskForm({ taskId, onCancel, onSaved }: TaskFormProps) {
       .filter((customer) => customer.id !== undefined)
       .map((customer) => ({ value: String(customer.id), label: customer.title })),
   ]
+
+  const selectedCustomerId = parseOptionalId(customerId)
+  const selectedCustomer =
+    selectedCustomerId === undefined
+      ? undefined
+      : customers.find((customer) => customer.id === selectedCustomerId)
+  const preferredFirmware =
+    selectedCustomer?.preferredControllerFirmware?.trim() || 'latest'
+  const preferredCpf = selectedCustomer?.preferredControllerCpfFile?.trim()
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -95,6 +107,7 @@ export function TaskForm({ taskId, onCancel, onSaved }: TaskFormProps) {
       status: status.trim() || 'New',
       dates: dates.trim() || undefined,
       overallNotes: overallNotes.trim() || undefined,
+      targetFirmwareOverrides: targetFirmwareOverrides.trim(),
     }
 
     setSaving(true)
@@ -192,6 +205,33 @@ export function TaskForm({ taskId, onCancel, onSaved }: TaskFormProps) {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {selectedCustomer ? (
+            <div className="space-y-1 rounded-md border bg-muted/40 px-3 py-2 text-sm">
+              <p>
+                <span className="text-muted-foreground">Preferred firmware: </span>
+                {preferredFirmware}
+              </p>
+              {preferredCpf ? (
+                <p>
+                  <span className="text-muted-foreground">CPF reference: </span>
+                  {preferredCpf}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div className="space-y-1.5">
+            <Label htmlFor="task-firmware-override">
+              Target firmware override
+            </Label>
+            <Input
+              id="task-firmware-override"
+              value={targetFirmwareOverrides}
+              onChange={(event) => setTargetFirmwareOverrides(event.target.value)}
+              placeholder="Optional override for this task only"
+            />
           </div>
 
           <div className="space-y-1.5">

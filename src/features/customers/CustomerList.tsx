@@ -68,21 +68,34 @@ export function CustomerList({ onCreate, onEdit }: CustomerListProps) {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-3 text-sm">
-                      <span
-                        className={
-                          locked
-                            ? 'rounded-md bg-muted px-2 py-0.5 font-medium text-muted-foreground'
-                            : 'rounded-md bg-secondary px-2 py-0.5 font-medium text-secondary-foreground'
-                        }
-                      >
-                        {locked ? 'Locked' : 'Unlocked'}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {customer.contact?.trim()
-                          ? customer.contact
-                          : 'No contact'}
-                      </span>
+                    <div className="flex flex-col gap-2 text-sm">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span
+                          className={
+                            locked
+                              ? 'rounded-md bg-muted px-2 py-0.5 font-medium text-muted-foreground'
+                              : 'rounded-md bg-secondary px-2 py-0.5 font-medium text-secondary-foreground'
+                          }
+                        >
+                          {locked ? 'Locked' : 'Unlocked'}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {customer.contact?.trim()
+                            ? customer.contact
+                            : 'No contact'}
+                        </span>
+                      </div>
+                      {customer.preferredControllerFirmware?.trim() ? (
+                        <p className="text-muted-foreground">
+                          Preferred firmware:{' '}
+                          {customer.preferredControllerFirmware.trim()}
+                        </p>
+                      ) : null}
+                      {customer.preferredControllerCpfFile?.trim() ? (
+                        <p className="text-muted-foreground">
+                          CPF: {customer.preferredControllerCpfFile.trim()}
+                        </p>
+                      ) : null}
                     </div>
                     <div className="flex gap-2">
                       <Button type="button" variant="outline" onClick={() => onEdit(id)}>

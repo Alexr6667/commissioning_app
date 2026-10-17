@@ -34,6 +34,12 @@ export function CustomerForm({ customerId, onCancel, onSaved }: CustomerFormProp
   const [contact, setContact] = useState(customer?.contact ?? '')
   const [siteAddress, setSiteAddress] = useState(customer?.siteAddress ?? '')
   const [notes, setNotes] = useState(customer?.notes ?? '')
+  const [preferredControllerFirmware, setPreferredControllerFirmware] = useState(
+    customer?.preferredControllerFirmware ?? '',
+  )
+  const [preferredControllerCpfFile, setPreferredControllerCpfFile] = useState(
+    customer?.preferredControllerCpfFile ?? '',
+  )
   const [isLocked, setIsLocked] = useState(customer?.isLocked ?? false)
   const [externalId, setExternalId] = useState(customer?.externalId ?? '')
   const [error, setError] = useState<string | null>(null)
@@ -53,6 +59,8 @@ export function CustomerForm({ customerId, onCancel, onSaved }: CustomerFormProp
       contact: contact.trim(),
       siteAddress: siteAddress.trim(),
       notes: notes.trim(),
+      preferredControllerFirmware: preferredControllerFirmware.trim(),
+      preferredControllerCpfFile: preferredControllerCpfFile.trim(),
       isLocked,
       externalId: externalId.trim() || undefined,
     }
@@ -139,6 +147,33 @@ export function CustomerForm({ customerId, onCancel, onSaved }: CustomerFormProp
               id="customer-notes"
               value={notes}
               onChange={(event) => setNotes(event.target.value)}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="customer-preferred-firmware">
+              Preferred controller firmware
+            </Label>
+            <Input
+              id="customer-preferred-firmware"
+              value={preferredControllerFirmware}
+              onChange={(event) =>
+                setPreferredControllerFirmware(event.target.value)
+              }
+              placeholder="latest"
+            />
+            <p className="text-xs text-muted-foreground">
+              Leave blank to use the latest firmware.
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="customer-preferred-cpf">Preferred CPF file</Label>
+            <Input
+              id="customer-preferred-cpf"
+              value={preferredControllerCpfFile}
+              onChange={(event) =>
+                setPreferredControllerCpfFile(event.target.value)
+              }
+              placeholder="Optional CPF reference"
             />
           </div>
           <div className="space-y-1.5">

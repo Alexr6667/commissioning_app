@@ -10,6 +10,8 @@ export interface Customer {
   siteAddress?: string
   notes?: string
   isLocked?: boolean
+  preferredControllerFirmware?: string
+  preferredControllerCpfFile?: string
   externalId?: string
 }
 
@@ -59,7 +61,7 @@ export interface Task {
   status?: string
   dates?: string
   overallNotes?: string
-  targetFirmwareOverrides?: unknown
+  targetFirmwareOverrides?: string
 }
 
 export interface TaskItem {
