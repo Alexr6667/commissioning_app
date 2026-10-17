@@ -12,6 +12,8 @@ import { CustomerForm } from '@/features/customers/CustomerForm'
 import { CustomerList } from '@/features/customers/CustomerList'
 import { KartModelForm } from '@/features/kart-models/KartModelForm'
 import { KartModelList } from '@/features/kart-models/KartModelList'
+import { KartForm } from '@/features/karts/KartForm'
+import { KartList } from '@/features/karts/KartList'
 import { seedIfEmpty } from '@/lib/db'
 import { useDataStore } from '@/stores/dataStore'
 import { bindOnlineListeners } from '@/stores/syncStore'
@@ -22,11 +24,14 @@ type Screen =
   | { name: 'customer-editor'; customerId?: number }
   | { name: 'models' }
   | { name: 'editor'; modelId?: number }
+  | { name: 'karts' }
+  | { name: 'kart-editor'; kartId?: number }
 
 function App() {
   const ready = useDataStore((s) => s.ready)
   const customers = useDataStore((s) => s.customers)
   const kartModels = useDataStore((s) => s.kartModels)
+  const karts = useDataStore((s) => s.karts)
   const hydrate = useDataStore((s) => s.hydrate)
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
 
@@ -42,6 +47,7 @@ function App() {
   const onCustomers =
     screen.name === 'customers' || screen.name === 'customer-editor'
   const onModels = screen.name === 'models' || screen.name === 'editor'
+  const onKarts = screen.name === 'karts' || screen.name === 'kart-editor'
 
   return (
     <div className="min-h-svh">
@@ -73,6 +79,13 @@ function App() {
             >
               Kart models
             </Button>
+            <Button
+              type="button"
+              variant={onKarts ? 'default' : 'outline'}
+              onClick={() => setScreen({ name: 'karts' })}
+            >
+              Karts
+            </Button>
           </nav>
         </div>
       </header>
@@ -85,8 +98,8 @@ function App() {
             <CardHeader>
               <CardTitle>Local data</CardTitle>
               <CardDescription>
-                Offline foundation: Dexie + Zustand. Customers and kart models
-                are edited here and saved on this device.
+                Offline foundation: Dexie + Zustand. Customers, kart models, and
+                karts are edited here and saved on this device.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
@@ -106,6 +119,11 @@ function App() {
                 {kartModels.length === 1
                   ? '1 kart model stored locally.'
                   : `${kartModels.length} kart models stored locally.`}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {karts.length === 1
+                  ? '1 kart stored locally.'
+                  : `${karts.length} karts stored locally.`}
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button
@@ -131,6 +149,16 @@ function App() {
                 >
                   New kart model
                 </Button>
+                <Button type="button" onClick={() => setScreen({ name: 'karts' })}>
+                  Karts
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setScreen({ name: 'kart-editor' })}
+                >
+                  New kart
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -153,12 +181,24 @@ function App() {
             onCreate={() => setScreen({ name: 'editor' })}
             onEdit={(modelId) => setScreen({ name: 'editor', modelId })}
           />
-        ) : (
+        ) : screen.name === 'editor' ? (
           <KartModelForm
             key={screen.modelId ?? 'new'}
             modelId={screen.modelId}
             onCancel={() => setScreen({ name: 'models' })}
             onSaved={() => setScreen({ name: 'models' })}
+          />
+        ) : screen.name === 'karts' ? (
+          <KartList
+            onCreate={() => setScreen({ name: 'kart-editor' })}
+            onEdit={(kartId) => setScreen({ name: 'kart-editor', kartId })}
+          />
+        ) : (
+          <KartForm
+            key={screen.kartId ?? 'new'}
+            kartId={screen.kartId}
+            onCancel={() => setScreen({ name: 'karts' })}
+            onSaved={() => setScreen({ name: 'karts' })}
           />
         )}
       </main>
