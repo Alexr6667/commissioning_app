@@ -10,6 +10,7 @@ import {
 import { SyncStatusIndicator } from '@/components/SyncStatusIndicator'
 import { CustomerForm } from '@/features/customers/CustomerForm'
 import { CustomerList } from '@/features/customers/CustomerList'
+import { ExcelImport } from '@/features/import/ExcelImport'
 import { KartModelForm } from '@/features/kart-models/KartModelForm'
 import { KartModelList } from '@/features/kart-models/KartModelList'
 import { KartForm } from '@/features/karts/KartForm'
@@ -23,6 +24,7 @@ import { bindOnlineListeners } from '@/stores/syncStore'
 
 type Screen =
   | { name: 'home' }
+  | { name: 'import' }
   | { name: 'customers' }
   | { name: 'customer-editor'; customerId?: number }
   | { name: 'models' }
@@ -192,9 +194,18 @@ function App() {
                 >
                   New task
                 </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setScreen({ name: 'import' })}
+                >
+                  Excel import
+                </Button>
               </div>
             </CardContent>
           </Card>
+        ) : screen.name === 'import' ? (
+          <ExcelImport onBack={() => setScreen({ name: 'home' })} />
         ) : screen.name === 'customers' ? (
           <CustomerList
             onCreate={() => setScreen({ name: 'customer-editor' })}
