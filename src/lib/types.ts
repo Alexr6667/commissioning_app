@@ -68,6 +68,8 @@ export interface TaskItem {
   kartId?: number
   status?: string
   notes?: string
+  /** Snapshot of KartModel.checklistTemplate at TaskItem creation. */
+  checklistTemplateSnapshot?: ChecklistField[]
 }
 
 export interface ChecklistResponse {

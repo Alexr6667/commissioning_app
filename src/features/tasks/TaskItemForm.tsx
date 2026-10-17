@@ -19,8 +19,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import type { Kart, Task } from '@/lib/types'
+import type { ChecklistField, Kart, Task } from '@/lib/types'
 import { useDataStore } from '@/stores/dataStore'
+
+function snapshotChecklistTemplate(
+  template: ChecklistField[] | undefined,
+): ChecklistField[] | undefined {
+  if (template === undefined) return undefined
+  return structuredClone(template)
+}
 
 const TASK_ITEM_STATUSES = [
   { value: 'New', label: 'New' },
@@ -77,6 +84,7 @@ export function TaskItemForm({
 }: TaskItemFormProps) {
   const tasks = useDataStore((s) => s.tasks)
   const karts = useDataStore((s) => s.karts)
+  const kartModels = useDataStore((s) => s.kartModels)
   const taskItems = useDataStore((s) => s.taskItems)
   const addTaskItem = useDataStore((s) => s.addTaskItem)
   const updateTaskItem = useDataStore((s) => s.updateTaskItem)
@@ -130,6 +138,15 @@ export function TaskItemForm({
         return
       }
 
+      const kart = karts.find((item) => item.id === parsedKartId)
+      const model =
+        kart?.modelId === undefined
+          ? undefined
+          : kartModels.find((item) => item.id === kart.modelId)
+      const checklistTemplateSnapshot = snapshotChecklistTemplate(
+        model?.checklistTemplate,
+      )
+
       setSaving(true)
       setError(null)
       try {
@@ -138,6 +155,7 @@ export function TaskItemForm({
           kartId: parsedKartId,
           status: status.trim() || 'New',
           notes: notes.trim() || undefined,
+          checklistTemplateSnapshot,
         })
         onSaved()
       } catch (err) {
