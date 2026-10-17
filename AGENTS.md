@@ -46,7 +46,6 @@ Stop and report if the work requires an unapproved material change to product be
 
 ## Git rules
 
-- Do not add AI or tool attribution to commits or PRs.
 - For implementation work: feature branch → implement approved contract → PR.
 - Do not merge your own implementation PRs.
 
