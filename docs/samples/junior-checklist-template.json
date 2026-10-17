@@ -1,0 +1,18 @@
+{
+  "model": "IPM Junior",
+  "fields": [
+    {"key": "chassis", "label": "Chassis Number", "type": "text", "required": true, "section": "Identity"},
+    {"key": "motorSn", "label": "Motor Serial Number", "type": "text", "section": "Identity"},
+    {"key": "loadFirmware", "label": "Load Firmware (EcoVolt_Junior_IPM)", "type": "passfail", "section": "Controller"},
+    {"key": "loadCpf", "label": "Load CPF File", "type": "passfail", "section": "Controller"},
+    {"key": "controllerSn", "label": "Controller Serial Number", "type": "text", "section": "Controller"},
+    {"key": "throttleCheck", "label": "Throttle Voltage Check", "type": "passfail", "section": "I/O"},
+    {"key": "brakeCheck", "label": "Brake Switch Check", "type": "passfail", "section": "I/O"},
+    {"key": "fwdRevCheck", "label": "Forward/Reverse Check", "type": "passfail", "section": "I/O"},
+    {"key": "bmmFirmware", "label": "Load BMM Firmware", "type": "passfail", "section": "BMS"},
+    {"key": "deHaardtSpeeds", "label": "De Haardt Speeds 1-4", "type": "passfail", "section": "De Haardt"},
+    {"key": "deHaardtStop", "label": "De Haardt Stop", "type": "passfail", "section": "De Haardt"},
+    {"key": "wiringOk", "label": "Wiring installed correctly", "type": "passfail", "section": "General"},
+    {"key": "notes", "label": "Notes", "type": "textarea", "section": "Notes"}
+  ]
+}
