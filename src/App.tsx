@@ -14,6 +14,8 @@ import { KartModelForm } from '@/features/kart-models/KartModelForm'
 import { KartModelList } from '@/features/kart-models/KartModelList'
 import { KartForm } from '@/features/karts/KartForm'
 import { KartList } from '@/features/karts/KartList'
+import { TaskForm } from '@/features/tasks/TaskForm'
+import { TaskList } from '@/features/tasks/TaskList'
 import { seedIfEmpty } from '@/lib/db'
 import { useDataStore } from '@/stores/dataStore'
 import { bindOnlineListeners } from '@/stores/syncStore'
@@ -26,12 +28,15 @@ type Screen =
   | { name: 'editor'; modelId?: number }
   | { name: 'karts' }
   | { name: 'kart-editor'; kartId?: number }
+  | { name: 'tasks' }
+  | { name: 'task-editor'; taskId?: number }
 
 function App() {
   const ready = useDataStore((s) => s.ready)
   const customers = useDataStore((s) => s.customers)
   const kartModels = useDataStore((s) => s.kartModels)
   const karts = useDataStore((s) => s.karts)
+  const tasks = useDataStore((s) => s.tasks)
   const hydrate = useDataStore((s) => s.hydrate)
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
 
@@ -48,6 +53,7 @@ function App() {
     screen.name === 'customers' || screen.name === 'customer-editor'
   const onModels = screen.name === 'models' || screen.name === 'editor'
   const onKarts = screen.name === 'karts' || screen.name === 'kart-editor'
+  const onTasks = screen.name === 'tasks' || screen.name === 'task-editor'
 
   return (
     <div className="min-h-svh">
@@ -86,6 +92,13 @@ function App() {
             >
               Karts
             </Button>
+            <Button
+              type="button"
+              variant={onTasks ? 'default' : 'outline'}
+              onClick={() => setScreen({ name: 'tasks' })}
+            >
+              Tasks
+            </Button>
           </nav>
         </div>
       </header>
@@ -98,8 +111,8 @@ function App() {
             <CardHeader>
               <CardTitle>Local data</CardTitle>
               <CardDescription>
-                Offline foundation: Dexie + Zustand. Customers, kart models, and
-                karts are edited here and saved on this device.
+                Offline foundation: Dexie + Zustand. Customers, kart models,
+                karts, and tasks are edited here and saved on this device.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
@@ -124,6 +137,11 @@ function App() {
                 {karts.length === 1
                   ? '1 kart stored locally.'
                   : `${karts.length} karts stored locally.`}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {tasks.length === 1
+                  ? '1 task stored locally.'
+                  : `${tasks.length} tasks stored locally.`}
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button
@@ -159,6 +177,16 @@ function App() {
                 >
                   New kart
                 </Button>
+                <Button type="button" onClick={() => setScreen({ name: 'tasks' })}>
+                  Tasks
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setScreen({ name: 'task-editor' })}
+                >
+                  New task
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -193,12 +221,24 @@ function App() {
             onCreate={() => setScreen({ name: 'kart-editor' })}
             onEdit={(kartId) => setScreen({ name: 'kart-editor', kartId })}
           />
-        ) : (
+        ) : screen.name === 'kart-editor' ? (
           <KartForm
             key={screen.kartId ?? 'new'}
             kartId={screen.kartId}
             onCancel={() => setScreen({ name: 'karts' })}
             onSaved={() => setScreen({ name: 'karts' })}
+          />
+        ) : screen.name === 'tasks' ? (
+          <TaskList
+            onCreate={() => setScreen({ name: 'task-editor' })}
+            onEdit={(taskId) => setScreen({ name: 'task-editor', taskId })}
+          />
+        ) : (
+          <TaskForm
+            key={screen.taskId ?? 'new'}
+            taskId={screen.taskId}
+            onCancel={() => setScreen({ name: 'tasks' })}
+            onSaved={() => setScreen({ name: 'tasks' })}
           />
         )}
       </main>
