@@ -14,6 +14,7 @@ import { KartModelForm } from '@/features/kart-models/KartModelForm'
 import { KartModelList } from '@/features/kart-models/KartModelList'
 import { KartForm } from '@/features/karts/KartForm'
 import { KartList } from '@/features/karts/KartList'
+import { TaskDetail } from '@/features/tasks/TaskDetail'
 import { TaskForm } from '@/features/tasks/TaskForm'
 import { TaskList } from '@/features/tasks/TaskList'
 import { seedIfEmpty } from '@/lib/db'
@@ -30,6 +31,7 @@ type Screen =
   | { name: 'kart-editor'; kartId?: number }
   | { name: 'tasks' }
   | { name: 'task-editor'; taskId?: number }
+  | { name: 'task-detail'; taskId: number }
 
 function App() {
   const ready = useDataStore((s) => s.ready)
@@ -53,7 +55,10 @@ function App() {
     screen.name === 'customers' || screen.name === 'customer-editor'
   const onModels = screen.name === 'models' || screen.name === 'editor'
   const onKarts = screen.name === 'karts' || screen.name === 'kart-editor'
-  const onTasks = screen.name === 'tasks' || screen.name === 'task-editor'
+  const onTasks =
+    screen.name === 'tasks' ||
+    screen.name === 'task-editor' ||
+    screen.name === 'task-detail'
 
   return (
     <div className="min-h-svh">
@@ -232,6 +237,15 @@ function App() {
           <TaskList
             onCreate={() => setScreen({ name: 'task-editor' })}
             onEdit={(taskId) => setScreen({ name: 'task-editor', taskId })}
+            onOpenItems={(taskId) =>
+              setScreen({ name: 'task-detail', taskId })
+            }
+          />
+        ) : screen.name === 'task-detail' ? (
+          <TaskDetail
+            key={screen.taskId}
+            taskId={screen.taskId}
+            onBack={() => setScreen({ name: 'tasks' })}
           />
         ) : (
           <TaskForm
