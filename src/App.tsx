@@ -8,6 +8,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { SyncStatusIndicator } from '@/components/SyncStatusIndicator'
+import { CustomerForm } from '@/features/customers/CustomerForm'
+import { CustomerList } from '@/features/customers/CustomerList'
 import { KartModelForm } from '@/features/kart-models/KartModelForm'
 import { KartModelList } from '@/features/kart-models/KartModelList'
 import { seedIfEmpty } from '@/lib/db'
@@ -16,6 +18,8 @@ import { bindOnlineListeners } from '@/stores/syncStore'
 
 type Screen =
   | { name: 'home' }
+  | { name: 'customers' }
+  | { name: 'customer-editor'; customerId?: number }
   | { name: 'models' }
   | { name: 'editor'; modelId?: number }
 
@@ -24,8 +28,6 @@ function App() {
   const customers = useDataStore((s) => s.customers)
   const kartModels = useDataStore((s) => s.kartModels)
   const hydrate = useDataStore((s) => s.hydrate)
-  const addCustomer = useDataStore((s) => s.addCustomer)
-  const [adding, setAdding] = useState(false)
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
 
   useEffect(() => {
@@ -37,18 +39,9 @@ function App() {
     return unbind
   }, [hydrate])
 
-  async function handleAddSampleCustomer() {
-    setAdding(true)
-    try {
-      await addCustomer({
-        title: `New customer ${customers.length + 1}`,
-        trackName: 'Local write test',
-        notes: 'Created via Zustand → Dexie optimistic write.',
-      })
-    } finally {
-      setAdding(false)
-    }
-  }
+  const onCustomers =
+    screen.name === 'customers' || screen.name === 'customer-editor'
+  const onModels = screen.name === 'models' || screen.name === 'editor'
 
   return (
     <div className="min-h-svh">
@@ -68,7 +61,14 @@ function App() {
             </Button>
             <Button
               type="button"
-              variant={screen.name === 'home' ? 'outline' : 'default'}
+              variant={onCustomers ? 'default' : 'outline'}
+              onClick={() => setScreen({ name: 'customers' })}
+            >
+              Customers
+            </Button>
+            <Button
+              type="button"
+              variant={onModels ? 'default' : 'outline'}
               onClick={() => setScreen({ name: 'models' })}
             >
               Kart models
@@ -85,8 +85,8 @@ function App() {
             <CardHeader>
               <CardTitle>Local data</CardTitle>
               <CardDescription>
-                Offline foundation: Dexie + Zustand. Kart models are edited from
-                here and saved on this device.
+                Offline foundation: Dexie + Zustand. Customers and kart models
+                are edited here and saved on this device.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
@@ -97,6 +97,7 @@ function App() {
                     <li key={customer.id}>
                       {customer.title}
                       {customer.trackName ? ` — ${customer.trackName}` : ''}
+                      {customer.isLocked ? ' (locked)' : ''}
                     </li>
                   ))}
                 </ul>
@@ -107,6 +108,19 @@ function App() {
                   : `${kartModels.length} kart models stored locally.`}
               </p>
               <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  onClick={() => setScreen({ name: 'customers' })}
+                >
+                  Customers
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setScreen({ name: 'customer-editor' })}
+                >
+                  New customer
+                </Button>
                 <Button type="button" onClick={() => setScreen({ name: 'models' })}>
                   Kart models
                 </Button>
@@ -117,17 +131,23 @@ function App() {
                 >
                   New kart model
                 </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => void handleAddSampleCustomer()}
-                  disabled={adding}
-                >
-                  {adding ? 'Saving…' : 'Add customer (optimistic)'}
-                </Button>
               </div>
             </CardContent>
           </Card>
+        ) : screen.name === 'customers' ? (
+          <CustomerList
+            onCreate={() => setScreen({ name: 'customer-editor' })}
+            onEdit={(customerId) =>
+              setScreen({ name: 'customer-editor', customerId })
+            }
+          />
+        ) : screen.name === 'customer-editor' ? (
+          <CustomerForm
+            key={screen.customerId ?? 'new'}
+            customerId={screen.customerId}
+            onCancel={() => setScreen({ name: 'customers' })}
+            onSaved={() => setScreen({ name: 'customers' })}
+          />
         ) : screen.name === 'models' ? (
           <KartModelList
             onCreate={() => setScreen({ name: 'editor' })}
